@@ -5,6 +5,15 @@ interface MovieDataProps {
   total_results: number;
 }
 
+interface CastProps {
+  name:string,
+  profile_path:string,
+  character:string
+}
+interface GenreProps {
+  id:number,
+  name:string
+}
 interface MovieProps {
     adult: boolean;
     backdrop_path: string;

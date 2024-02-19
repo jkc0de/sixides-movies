@@ -1,7 +1,19 @@
 import MovieCard from "./MovieCard";
+import dayjs from "dayjs";
 
-async function getData() {
-  const url = `${process.env.API_URL}/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc`;
+async function getMovieList(searchParams?: { [key: string]: string }) {
+  console.log(searchParams);
+  const sortBy = searchParams?.sortBy || "popularity.desc";
+  const minDate = dayjs(new Date(Date.now() - 40 * 24 * 60 * 60 * 1000)).format(
+    "YYYY-MM-DD"
+  ); // 40 days before today
+  const maxDate = dayjs(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)).format(
+    "YYYY-MM-DD"
+  ); // 2 days after today
+  const pageNumber = searchParams?.page || 1;
+
+  const url = `${process.env.API_URL}/discover/movie?include_adult=false&include_video=false&language=en-US&page=${pageNumber}&sort_by=${sortBy}&with_release_type=2|3&release_date.gte=${minDate}&release_date.lte=${maxDate}`;
+
   const options = {
     method: "GET",
     headers: {
@@ -15,12 +27,11 @@ async function getData() {
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
-
   return res.json();
 }
 
-export default async function Home() {
-  const movies = await getData();
+export default async function Home({ searchParams }: { searchParams: any }) {
+  const movies = await getMovieList(searchParams);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-12 lg:p-18 xl:p-24 bg-primary">
