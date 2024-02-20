@@ -1,15 +1,14 @@
+import Image from "next/image";
+import dayjs from "dayjs";
+
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
-import dayjs from "dayjs";
-import { Badge } from "@/components/ui/badge";
-import { formatGenre } from "@/lib/format";
 
 import {
   Dialog,
@@ -46,19 +45,29 @@ export default async function MovieCard({ movie }: { movie: MovieProps }) {
     <Dialog>
       <DialogTrigger className="w-full h-full outline-none">
         <Card className="rounded-lg overflow-hidden border-primary shadow-md w-full h-full">
-          {movieDetails.poster_path && (
-            <CardContent className="relative">
+          <CardContent className="relative">
+            {movieDetails.poster_path ? (
               <Image
                 src={`https://media.themoviedb.org/t/p/w440_and_h660_face/${movie.poster_path}`}
                 width={440}
                 height={660}
                 alt={movieDetails.title}
               />
+            ) : (
+              <Image
+                src="/default-movie-poster.svg"
+                width={440}
+                height={660}
+                alt={movieDetails.title}
+                className="border-b border-gray-400"
+              />
+            )}
+            {Math.ceil(movieDetails.vote_average * 10) > 0 && (
               <span className="absolute h-8 w-8 rounded-full bg-gradient-to-r from-primary to-blue-500 items-center flex justify-center -bottom-3 left-2 md:left-5 text-white font-medium p-2">
                 {Math.ceil(movieDetails.vote_average * 10)}
               </span>
-            </CardContent>
-          )}
+            )}
+          </CardContent>
           <CardHeader className="md:p-6 p-3">
             {movieDetails.title && (
               <CardTitle className="text-base leading-5 line-clamp-3">
@@ -109,7 +118,10 @@ export default async function MovieCard({ movie }: { movie: MovieProps }) {
               {movieDetails.credits?.cast
                 ?.slice(0, 10)
                 .map((cast: CastProps) => (
-                  <CastAvatar cast={cast} />
+                  <CastAvatar
+                    key={`${movieDetails.title}-${cast.name}`}
+                    cast={cast}
+                  />
                 ))}
             </div>
           </div>

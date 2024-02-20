@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import {
   Card,
   CardContent,
@@ -6,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
 
 // https://image.tmdb.org/t/p/w138_and_h175_face
 export default function CastAvatar({ cast }: { cast: CastProps }) {
@@ -23,7 +24,7 @@ export default function CastAvatar({ cast }: { cast: CastProps }) {
           />
         </CardContent>
       ) : (
-        <CardContent className="relative items-center justify-center flex w-full h-[162px]">
+        <CardContent className="relative items-center justify-center flex w-full h-[160px] border-b border-gray-400">
           <Image
             src={`default-user.svg`}
             width={138}

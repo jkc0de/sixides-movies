@@ -1,8 +1,16 @@
-import MovieCard from "./MovieCard";
 import dayjs from "dayjs";
+
+import MovieCard from "./MovieCard";
+import PaginationComponent from "./Pagination";
+import { redirect } from "next/navigation";
 
 async function getMovieList(searchParams?: { [key: string]: string }) {
   console.log(searchParams);
+  const pageNumber = searchParams?.page || "1";
+  if (pageNumber === "0") {
+    redirect("/?page=1");
+  }
+
   const sortBy = searchParams?.sortBy || "popularity.desc";
   const minDate = dayjs(new Date(Date.now() - 40 * 24 * 60 * 60 * 1000)).format(
     "YYYY-MM-DD"
@@ -10,7 +18,6 @@ async function getMovieList(searchParams?: { [key: string]: string }) {
   const maxDate = dayjs(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)).format(
     "YYYY-MM-DD"
   ); // 2 days after today
-  const pageNumber = searchParams?.page || 1;
 
   const url = `${process.env.API_URL}/discover/movie?include_adult=false&include_video=false&language=en-US&page=${pageNumber}&sort_by=${sortBy}&with_release_type=2|3&release_date.gte=${minDate}&release_date.lte=${maxDate}`;
 
@@ -34,11 +41,14 @@ export default async function Home({ searchParams }: { searchParams: any }) {
   const movies = await getMovieList(searchParams);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-12 lg:p-18 xl:p-24 bg-primary">
+    <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-12 lg:p-18 xl:p-24 bg-primary gap-10">
       <div className=" max-w-5xl w-full items-start justify-between font-mono text-sm grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-3 md:gap-5">
         {movies.results.map((movie: MovieProps) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
+      </div>
+      <div className="flex w-full items-center justify-center">
+        <PaginationComponent totalPages={movies.total_pages} />
       </div>
     </main>
   );
