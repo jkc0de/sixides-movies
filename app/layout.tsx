@@ -1,14 +1,26 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const roboto_mono = Roboto_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-roboto-mono",
+});
 
 export const metadata: Metadata = {
   title: "Sixides movies",
-  description: "Sixides movies",
+  description: "Movies now playing in theaters",
 };
 
 export default function RootLayout({
@@ -18,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${roboto_mono.variable}`}>
         <Navbar />
         <main>{children}</main>
         <Footer />

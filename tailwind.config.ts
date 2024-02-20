@@ -21,6 +21,10 @@ const config = {
       colors: {
         primary:"#7CC5DE"
       },
+      fontFamily: {
+        sans: ['var(--font-inter)'],
+        mono: ['var(--font-roboto-mono)'],
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

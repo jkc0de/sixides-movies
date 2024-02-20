@@ -27,7 +27,7 @@ export default function Sorting() {
     updatedParams.set("sortBy", value);
     updatedParams.set("page", "1"); // Set the page query parameter to 1
 
-    router.push(pathname + "?" + updatedParams.toString());
+    router.push(pathname + "?" + updatedParams.toString(), { scroll: false });
   };
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function Sorting() {
 
   return (
     <Select onValueChange={handleSelectChange} value={sortValue}>
-      <SelectTrigger className="w-[200px]">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>
       <SelectContent
