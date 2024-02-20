@@ -1,0 +1,24 @@
+{
+  "sorting": [
+    {
+      "label": "Title (A-Z)",
+      "value": "title.asc"
+    },
+    {
+      "label": "Title (Z-A)",
+      "value": "title.desc"
+    },
+    {
+      "label": "Most Popular",
+      "value": "popularity.desc"
+    },
+    {
+      "label": "Newest",
+      "value": "primary_release_date.desc"
+    },
+    {
+      "label": "Highest rated",
+      "value": "vote_average.desc"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import MovieCard from "./MovieCard";
 import PaginationComponent from "./Pagination";
 import { redirect } from "next/navigation";
+import Sorting from "./Sorting";
 
 async function getMovieList(searchParams?: { [key: string]: string }) {
   console.log(searchParams);
@@ -41,13 +42,16 @@ export default async function Home({ searchParams }: { searchParams: any }) {
   const movies = await getMovieList(searchParams);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-12 lg:p-18 xl:p-24 bg-primary gap-10">
-      <div className=" max-w-5xl w-full items-start justify-between font-mono text-sm grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-3 md:gap-5">
+    <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-12 lg:p-18 xl:p-24 bg-primary gap-5">
+      <div className="w-full max-w-5xl flex justify-end">
+        <Sorting />
+      </div>
+      <div className="max-w-5xl w-full items-start justify-between font-mono text-sm grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-3 md:gap-5">
         {movies.results.map((movie: MovieProps) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>
-      <div className="flex w-full items-center justify-center">
+      <div className="max-w-5xl flex w-full items-center justify-center py-5">
         <PaginationComponent totalPages={movies.total_pages} />
       </div>
     </main>
