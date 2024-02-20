@@ -41,7 +41,14 @@ export default function Sorting() {
       <SelectTrigger className="w-[200px]">
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent
+        ref={(ref) => {
+          if (!ref) return;
+          ref.ontouchstart = (e) => {
+            e.preventDefault();
+          };
+        }}
+      >
         {sortingList.sorting.map((sort) => (
           <SelectItem key={sort.value} value={sort.value}>
             {sort.label}
