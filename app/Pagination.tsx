@@ -114,25 +114,42 @@ export default function PaginationComponent({
     return pageNumbers;
   };
   return (
-    <Pagination>
-      <PaginationContent>
-        {currentPage > 1 && (
-          <PaginationItem>
+    <Pagination className="w-full">
+      <PaginationContent className="flex flex-col w-full">
+        <div className="flex items-center justify-between w-full">
+          <PaginationItem
+            className={`${
+              currentPage > 1 ? "visible" : "invisible"
+            } w-1/2 flex items-start`}
+          >
             <PaginationPrevious
+              className="w-full"
               href={pathname + "?" + createQueryString("page", currentPage - 1)}
             />
           </PaginationItem>
-        )}
-        {getPageNumbers().map((pageNumber, index) => (
-          <React.Fragment key={index}>{pageNumber}</React.Fragment>
-        ))}
-        {totalPages > 1 && currentPage !== totalPages && (
-          <PaginationItem>
-            <PaginationNext
-              href={pathname + "?" + createQueryString("page", currentPage + 1)}
-            />
-          </PaginationItem>
-        )}
+
+          {
+            <PaginationItem
+              className={`${
+                totalPages > 1 && currentPage !== totalPages
+                  ? "visible"
+                  : "invisible"
+              } w-1/2 flex items-end text-right`}
+            >
+              <PaginationNext
+                className="w-full"
+                href={
+                  pathname + "?" + createQueryString("page", currentPage + 1)
+                }
+              />
+            </PaginationItem>
+          }
+        </div>
+        <div className="flex items-center">
+          {getPageNumbers().map((pageNumber, index) => (
+            <React.Fragment key={index}>{pageNumber}</React.Fragment>
+          ))}
+        </div>
       </PaginationContent>
     </Pagination>
   );
