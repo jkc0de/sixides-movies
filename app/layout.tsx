@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${roboto_mono.variable}`}>
         <Navbar />
-        <main>{children}</main>
+        <main className="mx-auto w-full flex-grow">{children}</main>
         <Footer />
       </body>
     </html>

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 import { formatGenre } from "@/lib/format";
-import { debounce } from "lodash";
+import { debounce, filter } from "lodash";
 
 import {
   Popover,
@@ -30,6 +30,9 @@ export default function Filter() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const [filterOpen, setFilterOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [selectedGenres, setSelectedGenres] = useState<Array<string>>([]);
   const [selectedRatingsRange, setSelectedRatingsRange] = useState<
@@ -61,7 +64,7 @@ export default function Filter() {
         maxRange: range[1],
       });
     }, 800), // Adjust the debounce delay (in milliseconds) as needed
-    []
+    [filterChanges]
   );
 
   const handleSliderChange = (range: Array<number>) => {
@@ -89,51 +92,96 @@ export default function Filter() {
         [] as string[]
       ) || [];
     setSelectedGenres(genresFromUrl);
+
+    const minRangeFromUrl = searchParams.get("minRange");
+    const maxRangeFromUrl = searchParams.get("maxRange");
+
+    setSelectedRatingsRange([
+      Number(minRangeFromUrl) || 0,
+      Number(maxRangeFromUrl) || 100,
+    ]);
+    setFilterChanges({
+      ...filterChanges,
+      genres: genresFromUrl,
+      minRange: Number(minRangeFromUrl) || 0,
+      maxRange: Number(maxRangeFromUrl) || 100,
+    });
   }, [searchParams]);
 
   const handleApplyFilter = () => {
-    const updatedParams = new URLSearchParams(searchParams.toString());
-    if (filterChanges.genres) {
-      updatedParams.delete("genres"); // Remove existing genres param before appending new ones
-      if (updatedParams.has("page")) {
-        updatedParams.set("page", "1"); // Set the page query parameter to 1
+    setIsLoading(true);
+    try {
+      const updatedParams = new URLSearchParams(searchParams.toString());
+      if (filterChanges.genres) {
+        updatedParams.delete("genres"); // Remove existing genres param before appending new ones
+        if (updatedParams.has("page")) {
+          updatedParams.set("page", "1"); // Set the page query parameter to 1
+        }
+        filterChanges.genres.forEach((genreID) => {
+          updatedParams.append("genres", genreID);
+        });
       }
-      filterChanges.genres.forEach((genreID) => {
-        updatedParams.append("genres", genreID);
-      });
+      if (filterChanges.minRange >= 0) {
+        if (filterChanges.minRange === 0) {
+          updatedParams.delete("minRange");
+        } else {
+          updatedParams.set("minRange", filterChanges.minRange.toString());
+        }
+      }
+      if (filterChanges.maxRange) {
+        if (filterChanges.maxRange === 100) {
+          updatedParams.delete("maxRange");
+        } else {
+          updatedParams.set("maxRange", filterChanges.maxRange.toString());
+        }
+      }
+      router.push(pathname + "?" + updatedParams.toString(), { scroll: false });
+    } catch (error) {
+      console.log("routing error filter");
+    } finally {
+      setIsLoading(false);
+      setFilterOpen(false);
     }
-    if (filterChanges.minRange >= 0) {
-      updatedParams.set("minRange", filterChanges.minRange.toString());
-    }
-    if (filterChanges.maxRange) {
-      updatedParams.set("maxRange", filterChanges.maxRange.toString());
-    }
-    router.push(pathname + "?" + updatedParams.toString(), { scroll: false });
   };
+
+  useEffect(() => {
+    console.log(filterChanges);
+  }, [filterChanges]);
 
   const handleClearFilter = () => {
     setFilterChanges({ genres: [], minRange: 0, maxRange: 100 });
     setSelectedGenres([]);
     setSelectedRatingsRange([0, 100]);
 
-    const updatedParams = new URLSearchParams(searchParams.toString());
-    updatedParams.delete("genres");
-    updatedParams.delete("minRange");
-    updatedParams.delete("maxRange");
-    //   if (updatedParams.has("page")) {
-    //     updatedParams.set("page", "1");
-    //   }
-    router.push(pathname + "?" + updatedParams.toString(), { scroll: false });
+    // const updatedParams = new URLSearchParams(searchParams.toString());
+    // updatedParams.delete("genres");
+    // updatedParams.delete("minRange");
+    // updatedParams.delete("maxRange");
+    // //   if (updatedParams.has("page")) {
+    // //     updatedParams.set("page", "1");
+    // //   }
+    // router.push(pathname + "?" + updatedParams.toString(), { scroll: false });
   };
 
   return (
-    <Popover>
+    <Popover open={filterOpen} onOpenChange={setFilterOpen}>
       <PopoverTrigger className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 dark:border-slate-800 dark:bg-slate-950 dark:ring-offset-slate-950 dark:placeholder:text-slate-400 dark:focus:ring-slate-300">
         Filters
       </PopoverTrigger>
       <PopoverContent className="flex flex-col gap-2 pb-2" align="start">
         <div className="flex flex-col gap-1.5">
-          <span className="text-lg font-semibold">Genres</span>
+          <div className="flex items-center justify-between">
+            <span className="text-lg font-semibold">Genres</span>
+            <span className="items-end">
+              <Button
+                className="w-full text-sm"
+                onClick={handleClearFilter}
+                variant="outline"
+              >
+                Clear
+              </Button>
+            </span>
+          </div>
           <div className="flex flex-wrap gap-1 pb-1">
             {selectedGenres.map((genre) => (
               <Badge key={genre}>
@@ -187,15 +235,21 @@ export default function Filter() {
         </div>
         <Separator orientation="horizontal" />
         <div className="flex items-center gap-4">
-          <Button className="w-full text-lg" onClick={handleApplyFilter}>
+          <Button
+            className="w-full text-lg"
+            onClick={handleApplyFilter}
+            disabled={isLoading}
+          >
             Apply
           </Button>
           <Button
             className="w-full text-lg"
-            onClick={handleClearFilter}
+            onClick={() => {
+              setFilterOpen(false);
+            }}
             variant="secondary"
           >
-            Clear
+            Close
           </Button>
         </div>
       </PopoverContent>
