@@ -4,8 +4,10 @@ import MovieCard from "./MovieCard";
 import PaginationComponent from "./Pagination";
 import { redirect } from "next/navigation";
 
-async function getMovieList(searchParams?: { [key: string]: string }) {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+async function getMovieList(searchParams?: {
+  [key: string]: string | string[] | undefined;
+}) {
+  //   await new Promise((resolve) => setTimeout(resolve, 3000));
 
   const pageNumber = searchParams?.page || "1";
   if (pageNumber === "0") {
@@ -55,7 +57,7 @@ async function getMovieList(searchParams?: { [key: string]: string }) {
 export default async function MovieList({
   searchParams,
 }: {
-  searchParams: any;
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const movies = await getMovieList(searchParams);
 

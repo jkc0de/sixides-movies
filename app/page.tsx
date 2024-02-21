@@ -4,7 +4,11 @@ import { Suspense } from "react";
 import Loading from "./loading";
 import MovieList from "./MovieList";
 
-export default function Home({ searchParams }: { searchParams: any }) {
+export default function Home({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   return (
     <div className="flex flex-col items-center justify-between p-4 md:p-12 lg:p-18 xl:px-24 bg-primary gap-5">
       <div className="w-full max-w-5xl flex justify-end">

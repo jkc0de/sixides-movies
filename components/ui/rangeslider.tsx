@@ -3,12 +3,7 @@
 import { useEffect, useState } from "react";
 import Slider from "@mui/material/Slider";
 
-interface defaultProps {
-  min: number;
-  max: number;
-}
 export default function RangeSlider({
-  //   defaults,
   min,
   max,
   step,
@@ -16,16 +11,14 @@ export default function RangeSlider({
   label,
   rangeValue,
   setRangeValue,
-}: //   setRangeValue,
-{
-  //   defaults: defaultProps;
+}: {
   min: number;
   max: number;
   step: number;
   minDistance: number;
   label?: string;
   rangeValue: Array<number>;
-  setRangeValue: any;
+  setRangeValue: (range: Array<number>) => void;
 }) {
   const [value, setValue] = useState<Array<number>>([]);
 
@@ -33,7 +26,11 @@ export default function RangeSlider({
     setValue(rangeValue);
   }, [rangeValue]);
 
-  const handleChange = (event: any, newValue: any, activeThumb: any) => {
+  const handleChange = (
+    event: Event,
+    newValue: number | number[],
+    activeThumb: number
+  ) => {
     if (!Array.isArray(newValue)) {
       return;
     }
