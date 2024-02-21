@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 import { formatGenre } from "@/lib/format";
-import { debounce } from "lodash";
+import { debounce, filter } from "lodash";
 
 import {
   Popover,
@@ -55,17 +55,26 @@ export default function Filter() {
     setFilterChanges({ ...filterChanges, genres: newSelectedGenres });
   };
 
-  const debouncedSetRatingsRange = useCallback(
-    debounce((range) => {
-      setSelectedRatingsRange(range);
-      setFilterChanges({
-        ...filterChanges,
-        minRange: range[0],
-        maxRange: range[1],
-      });
-    }, 800), // Adjust the debounce delay (in milliseconds) as needed
-    [filterChanges]
-  );
+  // const debouncedSetRatingsRange = useCallback(
+  //   debounce((range) => {
+  //     setSelectedRatingsRange(range);
+  //     setFilterChanges({
+  //       ...filterChanges,
+  //       minRange: range[0],
+  //       maxRange: range[1],
+  //     });
+  //   }, 800), // Adjust the debounce delay (in milliseconds) as needed
+  //   [filterChanges]
+  // );
+
+  const debouncedSetRatingsRange = (range: Array<number>) => {
+    setSelectedRatingsRange(range);
+    setFilterChanges({
+      ...filterChanges,
+      minRange: range[0],
+      maxRange: range[1],
+    });
+  };
 
   const handleSliderChange = (range: Array<number>) => {
     debouncedSetRatingsRange(range);
@@ -149,6 +158,10 @@ export default function Filter() {
     setSelectedGenres([]);
     setSelectedRatingsRange([0, 100]);
   };
+
+  // useEffect(() => {
+  //   console.log(filterChanges);
+  // }, [filterChanges]);
 
   return (
     <Popover open={filterOpen} onOpenChange={setFilterOpen}>
