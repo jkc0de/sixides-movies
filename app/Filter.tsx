@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 import { formatGenre } from "@/lib/format";
-import { debounce, filter } from "lodash";
+import { debounce } from "lodash";
 
 import {
   Popover,
@@ -144,23 +144,10 @@ export default function Filter() {
     }
   };
 
-  useEffect(() => {
-    console.log(filterChanges);
-  }, [filterChanges]);
-
   const handleClearFilter = () => {
     setFilterChanges({ genres: [], minRange: 0, maxRange: 100 });
     setSelectedGenres([]);
     setSelectedRatingsRange([0, 100]);
-
-    // const updatedParams = new URLSearchParams(searchParams.toString());
-    // updatedParams.delete("genres");
-    // updatedParams.delete("minRange");
-    // updatedParams.delete("maxRange");
-    // //   if (updatedParams.has("page")) {
-    // //     updatedParams.set("page", "1");
-    // //   }
-    // router.push(pathname + "?" + updatedParams.toString(), { scroll: false });
   };
 
   return (

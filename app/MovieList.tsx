@@ -5,7 +5,7 @@ import PaginationComponent from "./Pagination";
 import { redirect } from "next/navigation";
 
 async function getMovieList(searchParams?: { [key: string]: string }) {
-  //   await new Promise((resolve) => setTimeout(resolve, 3000));
+  await new Promise((resolve) => setTimeout(resolve, 3000));
 
   const pageNumber = searchParams?.page || "1";
   if (pageNumber === "0") {
