@@ -3,6 +3,7 @@ import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { DismissableBanner } from "@/components/ui/banner";
 
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${roboto_mono.variable}`}>
         <Navbar />
+        <DismissableBanner message={"testing"} />
         <main className="mx-auto w-full flex-grow">{children}</main>
         <Footer />
       </body>
